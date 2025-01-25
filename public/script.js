@@ -1,6 +1,6 @@
 //* Making A 2D Array
-let cols = 30
-let rows = 30
+let cols = 400  
+let rows = 400
 let grid = new Array(cols).fill(new Array(rows).fill(null))
 let openSet = []
 let closedSet = []
@@ -8,11 +8,18 @@ let start
 let end
 let w, h
 let path = []
-let WallChance = 30
+let WallChance = 33
 let Repeat = true
 let Stoped = false
 let Done = false
 function mousePressed() {
+    grid.forEach((arr) => {
+        arr.forEach((obj) => {
+            obj.toggleWall()
+        })
+    })
+}
+function mouseDragged() {
     grid.forEach((arr) => {
         arr.forEach((obj) => {
             obj.toggleWall()
@@ -65,12 +72,12 @@ document.querySelector("#Twenty").addEventListener(("click"), () => {
     rows = 20
 })
 document.querySelector("#Thirty").addEventListener(("click"), () => {
-    cols = 30
-    rows = 30
+    cols = 100
+    rows = 100
 })
 //* Thing
 function heuristic(a, b) {
-    let d = Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
+    let d = (Math.abs(a.x - b.x) + Math.abs(a.y - b.y))
     return d
 }
 function between(x, min, max) {
@@ -131,7 +138,7 @@ class Stop {
 
 //* Call On Init
 function setup() {
-    createCanvas(801, 801)
+    createCanvas(2000, 2000)
     w = width / cols
     h = height / rows
     // Populating a 2D array
@@ -161,23 +168,26 @@ function setup() {
     grid[cols - 3][rows - 3].wall = false
 
     openSet.push(start)
+    grid.forEach((arr) => {
+        arr.forEach((obj) => {
+            if (obj.wall) {
+                obj.show(color(0, 0, 0))
+            }
+        })
+    })
 }
 
 //* Call On Frame
 function draw() {
-    background(0)
-    grid.forEach((coll, i) => {
-        coll.forEach((el, j) => {
-            grid[i][j].show(color(255))
-        })
-    })
+    const rand = Math.random()
+
     if (Repeat) {
         if (openSet.length !== 0) {
 
             // Check node with lowest f
             let winner = 0
             for (var i = 0; i < openSet.length; i++) {
-                if (openSet[i].f < openSet[winner].f) {
+                if (openSet[i].f <= openSet[winner].f) {
                     winner = i
                 }
             }
@@ -191,7 +201,7 @@ function draw() {
 
             }
             openSet = openSet.filter(obj => obj !== current)
-            closedSet.push(current)
+            closedSet.unshift(current)
             let neighbors = current.neighbors
             for (neighbor of neighbors) {
                 if (!closedSet.includes(neighbor) && neighbor.wall === false) {
@@ -199,6 +209,7 @@ function draw() {
                     if (openSet.includes(neighbor)) {
                         if (tempG < neighbor.g) {
                             neighbor.g = tempG
+                            break;
                         }
                     } else {
                         neighbor.g = tempG
@@ -223,15 +234,17 @@ function draw() {
             setup()
             loop()
         }
-        closedSet.forEach((obj, i) => {
-            obj && obj.show(color(255, 0, 0))
-        })
-        openSet.forEach((obj, i) => {
-            obj.show(color(0, 255, 0))
-        })
-        path.forEach((obj) => {
-            obj.show(color(0, 0, 255))
-        })
+        if(rand > 0.5){
+            closedSet.forEach((obj, i) => {
+                obj && obj.show(color(255, 0, 0))
+            })
+            openSet.forEach((obj, i) => {
+                obj.show(color(0, 255, 0))
+            })
+            path.forEach((obj) => {
+                obj.show(color(0, 0, 255))
+            })
+        }
     }
     if (Stoped) {
         closedSet.forEach((obj, i) => {
@@ -250,11 +263,5 @@ function draw() {
         })
     }
 
-    grid.forEach((arr) => {
-        arr.forEach((obj) => {
-            if (obj.wall) {
-                obj.show(color(0, 0, 0))
-            }
-        })
-    })
+
 }
