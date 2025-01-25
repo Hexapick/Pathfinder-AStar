@@ -162,20 +162,30 @@ function generateMazeBinary(rows, cols) {
       // b is left of a
       a.walls[3] = false; // a's left
       b.walls[1] = false; // b's right
+
     } else if (x === -1) {
       // b is right of a
       a.walls[1] = false; // a's right
       b.walls[3] = false; // b's left
+      if(Math.random() > 0.3){
+        b.walls[1] = false; // b's left
+        b.walls[3] = true; // b's left
+
+      }
     }
   
     const y = a.j - b.j;
     if (y === 1) {
       // b is above a
       a.walls[0] = false; // a's top
-      b.walls[2] = false; // b's bottom
+      b.walls[2] = true; // b's bottom
+      if(Math.random() > 0.9){
+      a.walls[0] = true; // a's top
+
+      }
     } else if (y === -1) {
       // b is below a
-      a.walls[2] = false; // a's bottom
+      a.walls[2] = true; // a's bottom
       b.walls[0] = false; // b's top
     }
   }
@@ -513,7 +523,7 @@ function draw() {
       }
   
       // Drawing (skip some frames if you want better performance)
-      if (rand > 0.2) {
+      if (rand > 0) {
         // closedSet is now a Set, so iterate differently
         for (const c of closedSet) {
           c.show(color(255, 0, 0));
